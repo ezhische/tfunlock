@@ -31,6 +31,4 @@ jobs:
 
     - uses: softprops/action-gh-release@v2
       with:
-        files: ${{ github.workspace }}/${REPO_NAME}.tar.gz
-      env:
-        REPO_NAME: ${{ env.REPO_NAME }}
+        files: ${{ github.workspace }}/${{ env.REPO_NAME }}.tar.gz
