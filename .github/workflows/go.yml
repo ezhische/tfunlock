@@ -1,0 +1,35 @@
+name: build
+
+on:
+  push:
+    tags:
+    - '*'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+
+    - uses: actions/setup-go@v4
+      with:
+        go-version: '1.22'
+
+    - name: Set repo base name
+      id: repo-name
+      run: echo "REPO_NAME=$(basename ${{ github.repository }})" >> $GITHUB_ENV
+
+    - name: build
+      env:
+        CGO_ENABLED: 0
+        GOOS: linux
+        GOARCH: amd64
+        REPO_NAME: ${{ env.REPO_NAME }}
+      run: |
+           go mod download
+           go build -buildvcs=false -ldflags="-s -w" -o ${REPO_NAME} -v ./...
+           tar czf ${REPO_NAME}.tar.gz ${REPO_NAME}
+
+    - uses: softprops/action-gh-release@v2
+      with:
+        files: ${{ github.workspace }}/$REPO_NAME.tar.gz
