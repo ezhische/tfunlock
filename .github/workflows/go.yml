@@ -26,7 +26,6 @@ jobs:
         GOARCH: amd64
         REPO_NAME: ${{ env.REPO_NAME }}
       run: |
-           go mod download
            go build -buildvcs=false -ldflags="-s -w" -o ${REPO_NAME} -v ./...
            tar czf ${REPO_NAME}.tar.gz ${REPO_NAME}
 
