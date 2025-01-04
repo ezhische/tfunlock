@@ -44,9 +44,13 @@ func (c *Client) FullScanTable(tableName string) (map[string]string, error) {
 	out := make(map[string]string, len(result.Items))
 	// Выводим все найденные элементы
 	for _, item := range result.Items {
-		Digest := item["Digest"].(*types.AttributeValueMemberS)
-		LockID := item["LockID"].(*types.AttributeValueMemberS)
-		out[LockID.Value] = Digest.Value
+		Digest, digestOk := item["Digest"].(*types.AttributeValueMemberS)
+		LockID, lockIDOk := item["LockID"].(*types.AttributeValueMemberS)
+		// Проверяем, что оба поля существуют
+		if digestOk && lockIDOk {
+			out[LockID.Value] = Digest.Value
+		}
+
 	}
 	return out, nil // Возвращаем все найденные элементы
 }
